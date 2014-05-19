@@ -1,0 +1,17 @@
+Title: Formulir Kontak
+Author: Taufik Nurrohman <http://latitudu.com>
+Version: 1.0.0
+
+====
+
+> Formulir kontak untuk Mecha.
+
+Setelah Anda menentukan halaman yang ingin Anda jadikan sebagai halaman kontak, edit halaman tersebut, lalu sisipkan _kode pintasan_ ini:
+
+~~~ .markdown
+{{contact_form}}
+~~~
+
+Kode di atas akan digunakan sebagai referensi untuk peletakan HTML formulir kontak.
+
+*[HTML]: Hyper Text Markup Language

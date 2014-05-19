@@ -1,0 +1,17 @@
+Title: Contact Form
+Author: Taufik Nurrohman <http://latitudu.com>
+Version: 1.0.0
+
+====
+
+> Contact form plugin for Mecha.
+
+After you specify the page you want to set as the contact page, edit the page, then insert this _shortcode_:
+
+~~~ .markdown
+{{contact_form}}
+~~~
+
+The code above will be used as a reference for the contact form HTML placement.
+
+*[HTML]: Hyper Text Markup Language

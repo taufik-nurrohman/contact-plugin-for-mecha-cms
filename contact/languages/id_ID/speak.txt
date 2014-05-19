@@ -1,0 +1,3 @@
+plugin_contact_title_select_page: Pilih halaman yang ingin Anda jadikan sebagai halaman kontak:
+plugin_contact_title_subject: Subjek Email
+plugin_contact_title_recipient: Alamat Email Penerima
