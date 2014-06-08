@@ -1,16 +1,17 @@
 <?php
 
-if( ! $language = File::exist(PLUGIN . '/contact/languages/' . $config->language . '/speak.txt')) {
-    $language = PLUGIN . '/contact/languages/en_US/speak.txt';
+// Load the configuration file
+$states = unserialize(File::open(PLUGIN . DS . 'contact' . DS . 'states' . DS . 'config.txt')->read());
+
+// Specify the language file path
+if( ! $language = File::exist(PLUGIN . DS . 'contact' . DS . 'languages' . DS . $config->language . DS . 'speak.txt')) {
+    $language = PLUGIN . DS . 'contact' . DS . 'languages' . DS . 'en_US' . DS . 'speak.txt';
 }
 
+// Merge the plugin language items to `Config::speak()`
 Config::merge('speak', Text::toArray(File::open($language)->read()));
 
-/**
- * Main Route
- */
-$states = unserialize(File::open(PLUGIN . '/contact/states/config.txt')->read());
-Route::accept($states['slug'], function() use($states) {
+if($config->url_current == $config->url . '/' . $states['slug']) {
 
     Weapon::add('shell_after', function() {
         echo '<style>
@@ -29,26 +30,23 @@ Route::accept($states['slug'], function() use($states) {
   .contact-form .grid-group:last-child .grid:first-child {display:none}
 }
 </style>';
-    }, 9);
-
-    $config = Config::get();
-    $speak = Config::speak();
+    }, 11);
 
     if($request = Request::post()) {
 
         Guardian::checkToken($request['token'], $config->url_current);
 
-        // Check for empty subject field
+        // Checks for empty subject field
         if(empty($request['subject'])) {
             Notify::error(Config::speak('notify_error_empty_field', array($speak->contact_subject)));
         }
 
-        // Check for empty name field
+        // Checks for empty name field
         if(empty($request['name'])) {
             Notify::error(Config::speak('notify_error_empty_field', array($speak->contact_name)));
         }
 
-        // Check for empty email field
+        // Checks for empty email field
         if( ! empty($request['email'])) {
             if( ! Guardian::check($request['email'])->this_is_email) {
                 Notify::error($speak->notify_invalid_email);
@@ -57,37 +55,37 @@ Route::accept($states['slug'], function() use($states) {
             Notify::error(Config::speak('notify_error_empty_field', array($speak->contact_email)));
         }
 
-        // Check for empty message field
+        // Checks for empty message field
         if(empty($request['message'])) {
             Notify::error(Config::speak('notify_error_empty_field', array($speak->contact_message)));
         }
 
-        // Check for math answer
-        if( ! is_numeric($request['math']) || ! Guardian::check((int) $request['math'], Session::get(Guardian::$math))->this_is_correct) {
+        // Checks for math answer
+        if( ! Guardian::checkMath($request['math'])) {
             Notify::error($speak->notify_invalid_math_answer);
         }
 
-        // Check for characters length in subject field
+        // Checks for characters length in subject field
         if(strlen($request['subject']) > 100) {
             Notify::error(Config::speak('notify_error_too_long', array($speak->contact_subject)));
         }
 
-        // Check for characters length in name field
+        // Checks for characters length in name field
         if(strlen($request['name']) > 100) {
             Notify::error(Config::speak('notify_error_too_long', array($speak->contact_name)));
         }
 
-        // Check for characters length in email field
+        // Checks for characters length in email field
         if(strlen($request['email']) > 100) {
             Notify::error(Config::speak('notify_error_too_long', array($speak->contact_email)));
         }
 
-        // Check for characters length in message field
+        // Checks for characters length in message field
         if(strlen($request['message']) > 4000) {
             Notify::error(Config::speak('notify_error_too_long', array($speak->contact_message)));
         }
 
-        // Check for spammer email and spam keywords in contact message
+        // Checks for spammer email and spam keywords in contact message
         $keywords = explode(',', $config->spam_keywords);
         foreach($keywords as $spam) {
             if((trim($spam) !== "" && $request['email'] == trim($spam)) || (trim($spam) !== "" && strpos($request['message'], trim($spam)) !== false)) {
@@ -133,29 +131,24 @@ Route::accept($states['slug'], function() use($states) {
     }
 
     ob_start();
-    include(PLUGIN . DS . 'contact' . DS . 'workers' . DS . 'form.php');
-    $html = ob_get_contents();
+    include PLUGIN . DS . 'contact' . DS . 'workers' . DS . 'form.php';
+    $contact_html = ob_get_contents();
     ob_end_clean();
-
-    $page = Get::page($states['slug']);
 
     // Replace string `{{contact_form}}` in the
     // selected page with the HTML markup of contact form
-    $page->content = str_replace('{{contact_form}}', $html, $page->content);
+    Filter::add('content', function($content) use($contact_html) {
+        return str_replace('{{contact_form}}', $contact_html, $content);
+    });
 
-    Config::set(array(
-        'page_type' => 'page',
-        'page_title' => $page->title . $config->title_separator . $config->title,
-        'page' => $page
-    ));
+}
 
-    Shield::attach('page-' . $states['slug']);
-
-});
 
 /**
  * Plugin Updater
+ * --------------
  */
+
 Route::accept($config->manager->slug . '/plugin/contact/update', function() use($config, $speak) {
 
     if( ! Guardian::happy()) {
@@ -166,17 +159,17 @@ Route::accept($config->manager->slug . '/plugin/contact/update', function() use(
 
         Guardian::checkToken($request['token']);
 
-        // Check for invalid email address
+        // Checks for invalid email address
         if( ! empty($request['email_recipient']) && ! Guardian::check($request['email_recipient'])->this_is_email) {
             Notify::error($speak->notify_invalid_email);
         }
 
         $request['email_recipient'] = Text::parse($request['email_recipient'])->to_ascii;
 
-        unset($request['token']); // Remove token from fields
+        unset($request['token']); // Remove token from request array
 
         if( ! Notify::errors()) {
-            File::write(serialize($request))->saveTo(PLUGIN . '/contact/states/config.txt');
+            File::write(serialize($request))->saveTo(PLUGIN . DS . 'contact' . DS . 'states' . DS . 'config.txt');
             Notify::success(Config::speak('notify_success_updated', array($speak->plugin)));
             Session::kill('error_input');
         } else {

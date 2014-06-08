@@ -6,7 +6,7 @@
     <?php
 
     $options = array();
-    $states = Session::get('error_input') === true ? Guardian::wayback() : unserialize(File::open(PLUGIN . '/contact/states/config.txt')->read());
+    $states = Session::get('error_input') === true ? Guardian::wayback() : unserialize(File::open(PLUGIN . DS . 'contact' . DS . 'states' . DS . 'config.txt')->read());
     if($s_pages = Get::pages('ASC')) {
         foreach($s_pages as $s_page) {
             list($s_time, $s_kind, $s_slug) = explode('_', basename($s_page, '.txt'));
@@ -34,7 +34,7 @@
     <span class="grid span-4"><input name="email_subject" type="text" class="input-block" value="<?php echo $states['email_subject']; ?>"></span>
   </label>
   <div class="grid-group">
-    <span class="grid span-2 form-label">&nbsp;</span>
+    <span class="grid span-2"></span>
     <span class="grid span-4"><button class="btn btn-primary btn-update" type="submit"><i class="fa fa-check-circle"></i> <?php echo $speak->update; ?></button></span>
   </div>
 </form>

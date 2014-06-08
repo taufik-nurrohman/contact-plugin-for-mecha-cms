@@ -22,7 +22,7 @@
     <span class="grid span-5"><input name="math" type="text" value="" autocomplete="off"></span>
   </label>
   <div class="grid-group">
-    <span class="grid span-1">&nbsp;</span>
+    <span class="grid span-1"></span>
     <span class="grid span-5"><button class="btn btn-success btn-send" type="submit"><i class="fa fa-send"></i> <?php echo $speak->send; ?></button></span>
   </div>
 </form>
