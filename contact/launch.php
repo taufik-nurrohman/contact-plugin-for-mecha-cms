@@ -1,17 +1,9 @@
 <?php
 
 // Load the configuration file
-$states = unserialize(File::open(PLUGIN . DS . 'contact' . DS . 'states' . DS . 'config.txt')->read());
+$contact_config = File::open(PLUGIN . DS . 'contact' . DS . 'states' . DS . 'config.txt')->unserialize();
 
-// Specify the language file path
-if( ! $language = File::exist(PLUGIN . DS . 'contact' . DS . 'languages' . DS . $config->language . DS . 'speak.txt')) {
-    $language = PLUGIN . DS . 'contact' . DS . 'languages' . DS . 'en_US' . DS . 'speak.txt';
-}
-
-// Merge the plugin language items to `Config::speak()`
-Config::merge('speak', Text::toArray(File::open($language)->read()));
-
-if($config->url_current == $config->url . '/' . $states['slug']) {
+if($config->url_current == $config->url . '/' . $contact_config['slug']) {
 
     Weapon::add('shell_after', function() {
         echo '<style>
@@ -37,17 +29,17 @@ if($config->url_current == $config->url . '/' . $states['slug']) {
         Guardian::checkToken($request['token'], $config->url_current);
 
         // Checks for empty subject field
-        if(empty($request['subject'])) {
+        if(trim($request['subject']) === "") {
             Notify::error(Config::speak('notify_error_empty_field', array($speak->contact_subject)));
         }
 
         // Checks for empty name field
-        if(empty($request['name'])) {
+        if(trim($request['name']) === "") {
             Notify::error(Config::speak('notify_error_empty_field', array($speak->contact_name)));
         }
 
         // Checks for empty email field
-        if( ! empty($request['email'])) {
+        if(trim($request['email']) !== "") {
             if( ! Guardian::check($request['email'])->this_is_email) {
                 Notify::error($speak->notify_invalid_email);
             }
@@ -56,7 +48,7 @@ if($config->url_current == $config->url . '/' . $states['slug']) {
         }
 
         // Checks for empty message field
-        if(empty($request['message'])) {
+        if(trim($request['message']) === "") {
             Notify::error(Config::speak('notify_error_empty_field', array($speak->contact_message)));
         }
 
@@ -85,19 +77,19 @@ if($config->url_current == $config->url . '/' . $states['slug']) {
             Notify::error(Config::speak('notify_error_too_long', array($speak->contact_message)));
         }
 
-        // Checks for spammer email and spam keywords in contact message
+        // Checks for spam email and spam keywords in contact message
         $keywords = explode(',', $config->spam_keywords);
         foreach($keywords as $spam) {
-            if((trim($spam) !== "" && $request['email'] == trim($spam)) || (trim($spam) !== "" && strpos($request['message'], trim($spam)) !== false)) {
-                Notify::warning($speak->notify_warning_intruder_detected . ' <mark>' . $spam . '</mark>');
+            if((trim($spam) !== "" && $request['email'] == trim($spam)) || (trim($spam) !== "" && strpos(strtolower($request['message']), strtolower(trim($spam))) !== false)) {
+                Notify::warning($speak->notify_warning_intruder_detected . ' <strong class="text-error pull-right">' . $spam . '</strong>');
                 break;
             }
         }
 
         if( ! Notify::errors()) {
 
-            if(empty($states['email_recipient'])) {
-                $states['email_recipient'] = $config->author_email;
+            if(empty($contact_config['email_recipient'])) {
+                $contact_config['email_recipient'] = $config->author_email;
             }
 
             $header  = "MIME-Version: 1.0\r\n";
@@ -115,10 +107,10 @@ if($config->url_current == $config->url . '/' . $states['slug']) {
             $message .= '<tr><th style="' . $th . '">' . $speak->contact_name . '</th><td style="' . $td . '">' . strip_tags($request['name']) . '</td></tr>';
             $message .= '<tr><th style="' . $th . '">' . $speak->contact_email . '</th><td style="' . $td . '">' . strip_tags($request['email']) . '</td></tr>';
             $message .= '<tr><th style="' . $th . '">' . $speak->contact_subject . '</th><td style="' . $td . '">' . strip_tags($request['subject']) . '</td></tr>';
-            $message .= '<tr><th style="' . $th . '">' . $speak->contact_message . '</th><td style="' . $td . '">' . Text::parse(strip_tags($request['message']))->to_html . '</td></tr>';
+            $message .= '<tr><th style="' . $th . '">' . $speak->contact_message . '</th><td style="' . $td . '">' . Text::parse($request['message'])->to_html . '</td></tr>';
             $message .= '</table></body></html>';
 
-            if(mail(Text::parse($states['email_recipient'])->to_decoded_html, $states['email_subject'] . ': ' . strip_tags($request['subject']), $message, $header)) {
+            if(mail(Text::parse($contact_config['email_recipient'])->to_decoded_html, $contact_config['email_subject'] . ': ' . strip_tags($request['subject']), $message, $header)) {
                 Notify::success(Config::speak('notify_success_submitted', array($speak->email)));
             } else {
                 Notify::error($speak->error . '.');
@@ -169,7 +161,7 @@ Route::accept($config->manager->slug . '/plugin/contact/update', function() use(
         unset($request['token']); // Remove token from request array
 
         if( ! Notify::errors()) {
-            File::write(serialize($request))->saveTo(PLUGIN . DS . 'contact' . DS . 'states' . DS . 'config.txt');
+            File::serialize($request)->saveTo(PLUGIN . DS . 'contact' . DS . 'states' . DS . 'config.txt');
             Notify::success(Config::speak('notify_success_updated', array($speak->plugin)));
             Session::kill('error_input');
         } else {
