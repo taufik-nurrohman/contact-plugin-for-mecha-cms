@@ -1,6 +1,6 @@
 <form class="contact-form" id="contact-form" action="<?php echo $config->url_current; ?>" method="post">
   <?php echo Notify::read(); ?>
-  <input name="token" type="hidden" value="<?php echo Guardian::makeToken(); ?>">
+  <input name="token" type="hidden" value="<?php echo Guardian::token(); ?>">
   <label class="grid-group">
     <span class="grid span-1 form-label"><?php echo $speak->contact_subject; ?></span>
     <span class="grid span-5"><input name="subject" type="text" class="input-block" value="<?php echo Guardian::wayback('subject'); ?>"></span>
@@ -23,6 +23,6 @@
   </label>
   <div class="grid-group">
     <span class="grid span-1"></span>
-    <span class="grid span-5"><button class="btn btn-success btn-send" type="submit"><i class="fa fa-send"></i> <?php echo $speak->send; ?></button></span>
+    <span class="grid span-5"><button class="btn btn-construct" type="submit"><i class="fa fa-send"></i> <?php echo $speak->send; ?></button></span>
   </div>
 </form>
