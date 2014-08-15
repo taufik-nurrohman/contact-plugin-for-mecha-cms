@@ -26,7 +26,10 @@ if($config->url_current == $config->url . '/' . $contact_config['slug']) {
 
     if($request = Request::post()) {
 
-        Guardian::checkToken($request['token'], $config->url_current);
+        if(Session::get('contact_form_token') !== $request['token']) {
+            Notify::error($speak->notify_invalid_token);
+            Guardian::kick($config->url_current);
+        }
 
         // Checks for empty subject field
         if(trim($request['subject']) === "") {
@@ -99,7 +102,7 @@ if($config->url_current == $config->url . '/' . $contact_config['slug']) {
             $header .= "Return-Path: " . $request['email'] . "\r\n";
             $header .= "X-Mailer: PHP/" . phpversion();
 
-            $th = 'font:inherit;text-align:right;vertical-align:top;margin:0;padding:0.5em 0.8em;font-weight:bold;background-color:#ccc;width:150px;';
+            $th = 'font:inherit;text-align:right;vertical-align:top;margin:0;padding:0.5em 0.8em;font-weight:normal;background-color:#ccc;width:150px;';
             $td = 'font:inherit;text-align:left;vertical-align:top;margin:0;padding:0.5em 0.8em;font-weight:normal;background-color:#eee;';
 
             $message  = '<html><head><meta charset="utf-8"></head><body><table style="width:100%;margin:0;padding:0;border:none;border-collapse:separate;border-spacing:2px;font:normal normal 13px/1.4 Helmet,FreeSans,Sans-Serif;color:black">';
@@ -121,6 +124,10 @@ if($config->url_current == $config->url . '/' . $contact_config['slug']) {
         Guardian::kick($config->url_current . '#contact-form');
 
     }
+
+    $contact_form_token = sha1(uniqid(mt_rand(), true));
+
+    Session::set('contact_form_token', $contact_form_token);
 
     ob_start();
     include PLUGIN . DS . 'contact' . DS . 'workers' . DS . 'form.php';
