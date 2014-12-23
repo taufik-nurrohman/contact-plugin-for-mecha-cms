@@ -1,6 +1,7 @@
 Title: Formulir Kontak
-Author: Taufik Nurrohman <http://latitudu.com>
-Version: 1.0.3
+Author: Taufik Nurrohman
+URL: http://latitudu.com
+Version: 1.0.4
 
 ====
 

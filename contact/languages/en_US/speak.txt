@@ -1,3 +1,4 @@
 plugin_contact_title_select_page: Select the page you want to set as the contact page:
 plugin_contact_title_subject: Email Subject
 plugin_contact_title_recipient: Email Recipient
+plugin_contact_title_editor_show: Show text editor
