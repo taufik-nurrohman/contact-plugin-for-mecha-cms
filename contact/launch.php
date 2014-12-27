@@ -152,7 +152,6 @@ if($config->url_current == $config->url . '/' . $contact_config['slug']) {
     }
 
     $contact_form_token = sha1(uniqid(mt_rand(), true));
-
     Session::set('contact_form_token', $contact_form_token);
 
     ob_start();

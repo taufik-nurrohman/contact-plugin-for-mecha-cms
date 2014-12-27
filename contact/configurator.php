@@ -35,13 +35,13 @@
     <span class="grid span-2 form-label"><?php echo $speak->plugin_contact_title_subject; ?></span>
     <span class="grid span-4"><input name="email_subject" type="text" class="input-block" value="<?php echo $contact_config['email_subject']; ?>"></span>
   </label>
-  <label class="grid-group">
+  <div class="grid-group">
     <span class="grid span-2"></span>
     <div class="grid span-4">
       <div><label><input name="html_parser" type="checkbox" value="true"<?php echo $contact_config['html_parser'] ? ' checked' : ""; ?>> <span><?php echo $speak->manager->title_html_parser; ?></span></label></div>
       <div><label><input name="text_editor" type="checkbox" value="true"<?php echo $contact_config['text_editor'] ? ' checked' : ""; ?>> <span><?php echo $speak->plugin_contact_title_editor_show; ?></span></label></div>
     </div>
-  </label>
+  </div>
   <div class="grid-group">
     <span class="grid span-2"></span>
     <span class="grid span-4"><button class="btn btn-action" type="submit"><i class="fa fa-check-circle"></i> <?php echo $speak->update; ?></button></span>
