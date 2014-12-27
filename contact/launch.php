@@ -24,24 +24,6 @@ if($config->url_current == $config->url . '/' . $contact_config['slug']) {
 </style>' . O_END;
     }, 11);
 
-    if($contact_config['html_parser']) {
-        Weapon::add('sword_before', function() use($contact_config) {
-            echo O_BEGIN . '<script>DASHBOARD.is_html_parser_enabled = ' . ($contact_config['html_parser'] ? 'true' : 'false') . ';</script>' . O_END;
-        }, 12);
-    }
-
-    if($contact_config['text_editor']) {
-        Weapon::add('shell_after', function() use($config) {
-            if( ! Asset::loaded('manager/shell/editor.css')) echo Asset::stylesheet('manager/shell/editor.css');
-            if( ! Asset::loaded($config->protocol . ICON_LIBRARY_PATH)) echo Asset::stylesheet($config->protocol . ICON_LIBRARY_PATH);
-        }, 11);
-        Weapon::add('SHIPMENT_REGION_BOTTOM', function() {
-            if( ! Asset::loaded('manager/sword/editor/editor.min.js')) echo Asset::javascript('manager/sword/editor/editor.min.js');
-            if( ! Asset::loaded('manager/sword/editor/mte.min.js')) echo Asset::javascript('manager/sword/editor/mte.min.js');
-            echo O_BEGIN . '<script>(function(a,b){var c=b.getElementById(\'contact-form\').getElementsByTagName(\'textarea\')[0];c.className=c.className+= \' code\';new MTE(c,{shortcut:1,toolbarClass:\'editor-toolbar cf\'})})(window,document);</script>' . O_END;
-        }, 11);
-    }
-
     if($request = Request::post()) {
 
         if(Session::get('contact_form_token') !== $request['token']) {
@@ -161,7 +143,7 @@ if($config->url_current == $config->url . '/' . $contact_config['slug']) {
 
     // Replace string `{{contact_form}}` in the
     // selected page with the HTML markup of contact form
-    Filter::add('content', function($content) use($contact_html) {
+    Filter::add('shortcode', function($content) use($contact_html) {
         return str_replace('{{contact_form}}', $contact_html, $content);
     });
 
@@ -188,10 +170,8 @@ Route::accept($config->manager->slug . '/plugin/contact/update', function() use(
             Notify::error($speak->notify_invalid_email);
         }
 
-        if( ! isset($request['text_editor'])) $request['text_editor'] = false;
-        if( ! isset($request['html_parser'])) $request['html_parser'] = false;
-
         $request['email_recipient'] = Text::parse($request['email_recipient'])->to_ascii;
+        if( ! isset($request['html_parser'])) $request['html_parser'] = false;
 
         unset($request['token']); // Remove token from request array
 
