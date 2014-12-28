@@ -1,7 +1,7 @@
 <?php
 
 // Load the configuration file
-$contact_config = File::open(PLUGIN . DS . 'contact' . DS . 'states' . DS . 'config.txt')->unserialize();
+$contact_config = File::open(PLUGIN . DS . basename(__DIR__) . DS . 'states' . DS . 'config.txt')->unserialize();
 
 if($config->url_current == $config->url . '/' . $contact_config['slug']) {
 
@@ -137,7 +137,7 @@ if($config->url_current == $config->url . '/' . $contact_config['slug']) {
     Session::set('contact_form_token', $contact_form_token);
 
     ob_start();
-    require PLUGIN . DS . 'contact' . DS . 'workers' . DS . 'form.php';
+    require PLUGIN . DS . basename(__DIR__) . DS . 'workers' . DS . 'form.php';
     $contact_html = ob_get_contents();
     ob_end_clean();
 
@@ -155,7 +155,7 @@ if($config->url_current == $config->url . '/' . $contact_config['slug']) {
  * --------------
  */
 
-Route::accept($config->manager->slug . '/plugin/contact/update', function() use($config, $speak) {
+Route::accept($config->manager->slug . '/plugin/' . basename(__DIR__) . '/update', function() use($config, $speak) {
 
     if( ! Guardian::happy()) {
         Shield::abort();
@@ -176,7 +176,7 @@ Route::accept($config->manager->slug . '/plugin/contact/update', function() use(
         unset($request['token']); // Remove token from request array
 
         if( ! Notify::errors()) {
-            File::serialize($request)->saveTo(PLUGIN . DS . 'contact' . DS . 'states' . DS . 'config.txt');
+            File::serialize($request)->saveTo(PLUGIN . DS . basename(__DIR__) . DS . 'states' . DS . 'config.txt');
             Notify::success(Config::speak('notify_success_updated', array($speak->plugin)));
             Session::kill('error_input');
         } else {

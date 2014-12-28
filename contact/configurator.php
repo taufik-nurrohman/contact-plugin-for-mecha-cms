@@ -6,7 +6,7 @@
     <?php
 
     $options = array();
-    $contact_config = Session::get('error_input') === true ? Guardian::wayback() : File::open(PLUGIN . DS . 'contact' . DS . 'states' . DS . 'config.txt')->unserialize();
+    $contact_config = Session::get('error_input') === true ? Guardian::wayback() : File::open(PLUGIN . DS . basename(__DIR__) . DS . 'states' . DS . 'config.txt')->unserialize();
     if($s_pages = Get::pages()) {
         foreach($s_pages as $s_page) {
             list($s_time, $s_kind, $s_slug) = explode('_', basename($s_page, '.txt'));
