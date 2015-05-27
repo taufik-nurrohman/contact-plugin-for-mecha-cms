@@ -1,9 +1,9 @@
 <?php
 
-// Load the configuration file
+// Load the configuration data
 $contact_config = File::open(PLUGIN . DS . basename(__DIR__) . DS . 'states' . DS . 'config.txt')->unserialize();
 
-if($config->url_current == $config->url . '/' . $contact_config['slug']) {
+if($config->url_path === $contact_config['slug']) {
 
     Weapon::add('shell_after', function() {
         echo O_BEGIN . '<style>
@@ -26,19 +26,19 @@ if($config->url_current == $config->url . '/' . $contact_config['slug']) {
 
     if($request = Request::post()) {
 
-        if(Session::get('contact_form_token') !== $request['token']) {
+        if( ! isset($request['token']) || Session::get('contact_form_token') !== $request['token']) {
             Notify::error($speak->notify_invalid_token);
             Guardian::kick($config->url_current);
         }
 
         // Check for empty subject field
         if(trim($request['subject']) === "") {
-            Notify::error(Config::speak('notify_error_empty_field', array($speak->contact_subject)));
+            Notify::error(Config::speak('notify_error_empty_field', $speak->contact_subject));
         }
 
         // Check for empty name field
         if(trim($request['name']) === "") {
-            Notify::error(Config::speak('notify_error_empty_field', array($speak->contact_name)));
+            Notify::error(Config::speak('notify_error_empty_field', $speak->contact_name));
         }
 
         // Check for empty email field
@@ -48,12 +48,12 @@ if($config->url_current == $config->url . '/' . $contact_config['slug']) {
                 Notify::error($speak->notify_invalid_email);
             }
         } else {
-            Notify::error(Config::speak('notify_error_empty_field', array($speak->contact_email)));
+            Notify::error(Config::speak('notify_error_empty_field', $speak->contact_email));
         }
 
         // Check for empty message field
         if(trim($request['message']) === "") {
-            Notify::error(Config::speak('notify_error_empty_field', array($speak->contact_message)));
+            Notify::error(Config::speak('notify_error_empty_field', $speak->contact_message));
         }
 
         // Check for math answer
@@ -62,23 +62,23 @@ if($config->url_current == $config->url . '/' . $contact_config['slug']) {
         }
 
         // Check for characters length in subject field
-        if(Guardian::check($request['subject'], 100)->this_is_too_long) {
-            Notify::error(Config::speak('notify_error_too_long', array($speak->contact_subject)));
+        if(Guardian::check($request['subject'], '->too_long', 100)) {
+            Notify::error(Config::speak('notify_error_too_long', $speak->contact_subject));
         }
 
         // Check for characters length in name field
-        if(Guardian::check($request['name'], 100)->this_is_too_long) {
-            Notify::error(Config::speak('notify_error_too_long', array($speak->contact_name)));
+        if(Guardian::check($request['name'], '->too_long', 100)) {
+            Notify::error(Config::speak('notify_error_too_long', $speak->contact_name));
         }
 
         // Check for characters length in email field
-        if(Guardian::check($request['email'], 100)->this_is_too_long) {
-            Notify::error(Config::speak('notify_error_too_long', array($speak->contact_email)));
+        if(Guardian::check($request['email'], '->too_long', 100)) {
+            Notify::error(Config::speak('notify_error_too_long', $speak->contact_email));
         }
 
         // Check for characters length in message field
-        if(Guardian::check($request['message'], 4000)->this_is_too_long) {
-            Notify::error(Config::speak('notify_error_too_long', array($speak->contact_message)));
+        if(Guardian::check($request['message'], '->too_long', 4000)) {
+            Notify::error(Config::speak('notify_error_too_long', $speak->contact_message));
         }
 
         // Check for spam email and spam keywords in contact message
@@ -118,11 +118,11 @@ if($config->url_current == $config->url . '/' . $contact_config['slug']) {
             $message .= '<tr><th style="' . $th . '">' . $speak->contact_name . '</th><td style="' . $td . '">' . strip_tags($request['name']) . '</td></tr>';
             $message .= '<tr><th style="' . $th . '">' . $speak->contact_email . '</th><td style="' . $td . '">' . strip_tags($request['email']) . '</td></tr>';
             $message .= '<tr><th style="' . $th . '">' . $speak->contact_subject . '</th><td style="' . $td . '">' . strip_tags($request['subject']) . '</td></tr>';
-            $message .= '<tr><th style="' . $th . '">' . $speak->contact_message . '</th><td style="' . $td . '">' . ($contact_config['html_parser'] ? Text::parse($request['message'])->to_html : $request['message']) . '</td></tr>';
+            $message .= '<tr><th style="' . $th . '">' . $speak->contact_message . '</th><td style="' . $td . '">' . ($contact_config['html_parser'] ? Text::parse($request['message'], '->html') : $request['message']) . '</td></tr>';
             $message .= '</table></body></html>';
 
             if(mail(Text::parse($contact_config['email_recipient'])->to_decoded_html, $contact_config['email_subject'] . ': ' . strip_tags($request['subject']), $message, $header)) {
-                Notify::success(Config::speak('notify_success_submitted', array($speak->email)));
+                Notify::success(Config::speak('notify_success_submitted', $speak->email));
             } else {
                 Notify::error($speak->error . '.');
             }
@@ -144,6 +144,9 @@ if($config->url_current == $config->url . '/' . $contact_config['slug']) {
     // Replace string `{{contact_form}}` in the
     // selected page with the HTML markup of contact form
     Filter::add('shortcode', function($content) use($contact_html) {
+        if(strpos($content, '{{contact_form}}') === false) {
+            return $content . $contact_html;
+        }
         return str_replace('{{contact_form}}', $contact_html, $content);
     });
 
@@ -156,25 +159,18 @@ if($config->url_current == $config->url . '/' . $contact_config['slug']) {
  */
 
 Route::accept($config->manager->slug . '/plugin/' . basename(__DIR__) . '/update', function() use($config, $speak) {
-
     if( ! Guardian::happy()) {
         Shield::abort();
     }
-
     if($request = Request::post()) {
-
         Guardian::checkToken($request['token']);
-
         // Check for invalid email address
         if( ! empty($request['email_recipient']) && ! Guardian::check($request['email_recipient'])->this_is_email) {
             Notify::error($speak->notify_invalid_email);
         }
-
         $request['email_recipient'] = Text::parse($request['email_recipient'])->to_ascii;
         if( ! isset($request['html_parser'])) $request['html_parser'] = false;
-
         unset($request['token']); // Remove token from request array
-
         if( ! Notify::errors()) {
             File::serialize($request)->saveTo(PLUGIN . DS . basename(__DIR__) . DS . 'states' . DS . 'config.txt');
             Notify::success(Config::speak('notify_success_updated', array($speak->plugin)));
@@ -184,9 +180,6 @@ Route::accept($config->manager->slug . '/plugin/' . basename(__DIR__) . '/update
             //  sessions for handling the `Guardian::wayback()` in `configurator.php`
             Session::set('error_input', true);
         }
-
         Guardian::kick(dirname($config->url_current));
-
     }
-
 });

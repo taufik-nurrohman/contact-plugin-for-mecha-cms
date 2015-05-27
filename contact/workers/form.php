@@ -1,28 +1,38 @@
 <form class="contact-form" id="contact-form" action="<?php echo $config->url_current; ?>" method="post">
   <?php echo Notify::read(); ?>
-  <input name="token" type="hidden" value="<?php echo $contact_form_token; ?>">
+  <?php echo Form::hidden('token', $contact_form_token); ?>
   <label class="grid-group">
     <span class="grid span-1 form-label"><?php echo $speak->contact_subject; ?></span>
-    <span class="grid span-5"><input name="subject" type="text" class="input-block" value="<?php echo Guardian::wayback('subject'); ?>"></span>
+    <span class="grid span-5"><?php echo Form::text('subject', Guardian::wayback('subject'), null, array('class' => 'input-block')); ?></span>
   </label>
   <label class="grid-group">
     <span class="grid span-1 form-label"><?php echo $speak->contact_name; ?></span>
-    <span class="grid span-5"><input name="name" type="text" class="input-block" value="<?php echo Guardian::wayback('name'); ?>"></span>
+    <span class="grid span-5"><?php echo Form::text('name', Guardian::wayback('name'), null, array('class' => 'input-block')); ?></span>
   </label>
   <label class="grid-group">
     <span class="grid span-1 form-label"><?php echo $speak->contact_email; ?></span>
-    <span class="grid span-5"><input name="email" type="email" class="input-block" value="<?php echo Guardian::wayback('email'); ?>"></span>
+    <span class="grid span-5"><?php echo Form::email('email', Guardian::wayback('email'), null, array('class' => 'input-block')); ?></span>
   </label>
   <label class="grid-group">
     <span class="grid span-1 form-label"><?php echo $speak->contact_message; ?></span>
-    <span class="grid span-5"><textarea name="message" class="textarea-block"><?php echo Guardian::wayback('message'); ?></textarea></span>
+    <span class="grid span-5"><?php echo Form::textarea('message', Guardian::wayback('message'), null, array('class' => 'textarea-block')); ?></span>
   </label>
   <label class="grid-group">
     <span class="grid span-1 form-label"><?php echo Guardian::math(); ?> =</span>
-    <span class="grid span-5"><input name="math" type="text" value="" autocomplete="off"></span>
+    <span class="grid span-5"><?php echo Form::text('math', "", null, array('autocomplete' => 'off')); ?></span>
   </label>
   <div class="grid-group">
     <span class="grid span-1"></span>
-    <span class="grid span-5"><button class="btn btn-construct" type="submit"><i class="fa fa-send"></i> <?php echo $speak->send; ?></button></span>
+    <span class="grid span-5"><?php echo Form::button(Cell::i("", array(
+        'class' => array(
+            'fa',
+            'fa-send'
+        )
+    )) . ' ' . $speak->send, null, null, null, array(
+        'class' => array(
+            'btn',
+            'btn-construct'
+        )
+    )); ?></span>
   </div>
 </form>

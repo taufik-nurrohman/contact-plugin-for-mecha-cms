@@ -1,7 +1,7 @@
 Title: Contact Form
 Author: Taufik Nurrohman
 URL: http://latitudu.com
-Version: 1.0.4
+Version: 1.1.0
 
 ====
 
@@ -9,7 +9,7 @@ Version: 1.0.4
 
 After you specify the page you want to set as the contact page, edit the page, then insert this _shortcode_:
 
-~~~ .markdown
+~~~ .no-highlight
 {{contact_form}}
 ~~~
 
