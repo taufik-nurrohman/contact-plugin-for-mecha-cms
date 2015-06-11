@@ -4,15 +4,15 @@
 
   $options = array();
   $contact_config = Session::get('error_input') === true ? Guardian::wayback() : File::open(PLUGIN . DS . basename(__DIR__) . DS . 'states' . DS . 'config.txt')->unserialize();
+  if(trim($contact_config['email_recipient']) === "") {
+      $contact_config['email_recipient'] = $config->author_email;
+  }
   if($s_pages = Get::pages()) {
       foreach($s_pages as $s_page) {
           list($s_time, $s_kind, $s_slug) = explode('_', basename($s_page, '.txt'));
           $options[$s_slug] = Get::pageAnchor($s_page)->title;
       }
       ksort($options);
-      if(trim($contact_config['email_recipient']) === "") {
-          $contact_config['email_recipient'] = $config->author_email;
-      }
       echo '<p>' . $speak->plugin_contact_title_select_page . '</p>';
       echo '<p>' . Form::select('slug', $options, $contact_config['slug'], array('class' => 'select-block')) . '</p>';
   } else {
@@ -23,7 +23,7 @@
   <hr>
   <label class="grid-group">
     <span class="grid span-2 form-label"><?php echo $speak->plugin_contact_title_recipient; ?></span>
-    <span class="grid span-4"><?php echo Form::email('email_recipient', Text::parse($contact_config['email_recipient'])->to_decoded_html, null, array(
+    <span class="grid span-4"><?php echo Form::email('email_recipient', Text::parse($contact_config['email_recipient'], '->decoded_html'), null, array(
         'class' => 'input-block'
     )); ?></span>
   </label>

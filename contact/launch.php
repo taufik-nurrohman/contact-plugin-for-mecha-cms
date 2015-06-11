@@ -44,7 +44,7 @@ if(Route::is($contact_config['slug'])) {
         // Check for empty email field
         if(trim($request['email']) !== "") {
             // Check for invalid email address
-            if( ! Guardian::check($request['email'])->this_is_email) {
+            if( ! Guardian::check($request['email'], '->email') {
                 Notify::error($speak->notify_invalid_email);
             }
         } else {
@@ -87,8 +87,8 @@ if(Route::is($contact_config['slug'])) {
             $fuck = trim($spam);
             if($fuck !== "") {
                 if(
-                    $request['email'] == $fuck || // Block by email address
-                    Get::IP() != 'N/A' && Get::IP() == $fuck || // Block by IP address
+                    $request['email'] === $fuck || // Block by email address
+                    Get::IP() !== 'N/A' && Get::IP() === $fuck || // Block by IP address
                     strpos(strtolower($request['message']), strtolower($fuck)) !== false // Block by message word(s)
                 ) {
                     Notify::warning($speak->notify_warning_intruder_detected . ' <strong class="text-error pull-right">' . $fuck . '</strong>');
@@ -99,13 +99,13 @@ if(Route::is($contact_config['slug'])) {
 
         if( ! Notify::errors()) {
 
-            if(empty($contact_config['email_recipient'])) {
+            if(trim($contact_config['email_recipient']) === "") {
                 $contact_config['email_recipient'] = $config->author_email;
             }
 
             $header  = "MIME-Version: 1.0\r\n";
             $header .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
-            $header .= "From: " . $request['email'] . "\r\n";
+            $header .= "From: " . strip_tags($request['name']) . " <" . $request['email'] . "\r\n";
             $header .= "Reply-To: " . $request['email'] . "\r\n";
             $header .= "Return-Path: " . $request['email'] . "\r\n";
             $header .= "X-Mailer: PHP/" . phpversion();
@@ -121,7 +121,7 @@ if(Route::is($contact_config['slug'])) {
             $message .= '<tr><th style="' . $th . '">' . $speak->contact_message . '</th><td style="' . $td . '">' . ($contact_config['html_parser'] ? Text::parse($request['message'], '->html') : $request['message']) . '</td></tr>';
             $message .= '</table></body></html>';
 
-            if(mail(Text::parse($contact_config['email_recipient'])->to_decoded_html, $contact_config['email_subject'] . ': ' . strip_tags($request['subject']), $message, $header)) {
+            if(mail(Text::parse($contact_config['email_recipient'], '->decoded_html'), $contact_config['email_subject'] . ': ' . strip_tags($request['subject']), $message, $header)) {
                 Notify::success(Config::speak('notify_success_submitted', $speak->email));
             } else {
                 Notify::error($speak->error . '.');
