@@ -105,7 +105,7 @@ if(Route::is($contact_config['slug'])) {
 
             $header  = "MIME-Version: 1.0\r\n";
             $header .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
-            $header .= "From: " . strip_tags($request['name']) . " <" . $request['email'] . "\r\n";
+            $header .= "From: " . strip_tags($request['name']) . " <" . $request['email'] . ">\r\n";
             $header .= "Reply-To: " . $request['email'] . "\r\n";
             $header .= "Return-Path: " . $request['email'] . "\r\n";
             $header .= "X-Mailer: PHP/" . phpversion();
