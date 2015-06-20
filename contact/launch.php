@@ -44,7 +44,7 @@ if(Route::is($contact_config['slug'])) {
         // Check for empty email field
         if(trim($request['email']) !== "") {
             // Check for invalid email address
-            if( ! Guardian::check($request['email'], '->email') {
+            if( ! Guardian::check($request['email'], '->email')) {
                 Notify::error($speak->notify_invalid_email);
             }
         } else {
