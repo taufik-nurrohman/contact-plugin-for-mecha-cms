@@ -15,13 +15,6 @@ Setelah Anda menentukan halaman yang ingin Anda jadikan sebagai halaman kontak, 
 
 Kode di atas akan digunakan sebagai referensi untuk peletakan HTML formulir kontak.
 
----
-
-<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
-  <input name="cmd" type="hidden" value="_s-xclick">
-  <input name="hosted_button_id" type="hidden" value="TNVGH7NQ7E4EU">
-  <input name="submit" type="image" class="help" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" alt="PayPal &ndash; The safer, easier way to pay online!" title="Menggunakan proyek kode sumber terbuka itu sangatlah menyenangkan dan murah, akan tetapi kita juga perlu biaya untuk memelihara dan menjaga mereka tetap ada di &lt;code&gt;www&lt;/code&gt;.">
-  <img alt="" src="https://www.paypalobjects.com/id_ID/i/scr/pixel.gif" width="1" height="1">
-</form>
+<!-- block:donate -->
 
 *[HTML]: Hyper Text Markup Language

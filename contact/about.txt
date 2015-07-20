@@ -15,13 +15,6 @@ After you specify the page you want to set as the contact page, edit the page, t
 
 The code above will be used as a reference for the contact form HTML placement.
 
----
-
-<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
-  <input name="cmd" type="hidden" value="_s-xclick">
-  <input name="hosted_button_id" type="hidden" value="TNVGH7NQ7E4EU">
-  <input name="submit" type="image" class="help" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" alt="PayPal &ndash; The safer, easier way to pay online!" title="Using an open source project is incredibly fun and cheap, but we also need costs to maintain and keep them exist in the &lt;code&gt;www&lt;/code&gt;.">
-  <img alt="" src="https://www.paypalobjects.com/id_ID/i/scr/pixel.gif" width="1" height="1">
-</form>
+<!-- block:donate -->
 
 *[HTML]: Hyper Text Markup Language
