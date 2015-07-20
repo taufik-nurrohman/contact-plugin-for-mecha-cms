@@ -1,7 +1,7 @@
 <?php
 
 // Load the configuration data
-$contact_config = File::open(PLUGIN . DS . basename(__DIR__) . DS . 'states' . DS . 'config.txt')->unserialize();
+$contact_config = File::open(PLUGIN . DS . File::B(__DIR__) . DS . 'states' . DS . 'config.txt')->unserialize();
 
 if(Route::is($contact_config['slug'])) {
 
@@ -137,14 +137,14 @@ if(Route::is($contact_config['slug'])) {
     Session::set('contact_form_token', $contact_form_token);
 
     ob_start();
-    require PLUGIN . DS . basename(__DIR__) . DS . 'workers' . DS . 'form.php';
+    require PLUGIN . DS . File::B(__DIR__) . DS . 'workers' . DS . 'form.php';
     $contact_html = ob_get_contents();
     ob_end_clean();
 
     // Replace string `{{contact_form}}` in the
     // selected page with the HTML markup of contact form
     Filter::add('shortcode', function($content) use($contact_html) {
-        if(strpos($content, '{{contact_form}}') === false) {
+        if( ! Text::check($content)->has('{{contact_form}}')) {
             return $content . $contact_html;
         }
         return str_replace('{{contact_form}}', $contact_html, $content);

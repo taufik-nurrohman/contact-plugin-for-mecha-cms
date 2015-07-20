@@ -3,13 +3,13 @@
   <?php
 
   $options = array();
-  $contact_config = Session::get('error_input') === true ? Guardian::wayback() : File::open(PLUGIN . DS . basename(__DIR__) . DS . 'states' . DS . 'config.txt')->unserialize();
+  $contact_config = Session::get('error_input') === true ? Guardian::wayback() : File::open(PLUGIN . DS . File::B(__DIR__) . DS . 'states' . DS . 'config.txt')->unserialize();
   if(trim($contact_config['email_recipient']) === "") {
       $contact_config['email_recipient'] = $config->author_email;
   }
   if($s_pages = Get::pages()) {
       foreach($s_pages as $s_page) {
-          list($s_time, $s_kind, $s_slug) = explode('_', basename($s_page, '.txt'));
+          list($s_time, $s_kind, $s_slug) = explode('_', File::N($s_page));
           $options[$s_slug] = Get::pageAnchor($s_page)->title;
       }
       ksort($options);
