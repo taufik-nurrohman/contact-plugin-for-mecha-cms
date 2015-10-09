@@ -12,7 +12,7 @@
           list($s_time, $s_kind, $s_slug) = explode('_', File::N($s_page));
           $options[$s_slug] = Get::pageAnchor($s_page)->title;
       }
-      ksort($options);
+      asort($options);
       echo '<p>' . $speak->plugin_contact_title_select_page . '</p>';
       echo '<p>' . Form::select('slug', $options, $contact_config['slug'], array('class' => 'select-block')) . '</p>';
   } else {
