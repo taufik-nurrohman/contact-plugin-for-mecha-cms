@@ -143,11 +143,11 @@ if(Route::is($contact_config['slug'])) {
 
     // Replace string `{{contact_form}}` in the
     // selected page with the HTML markup of contact form
-    Filter::add('shortcode', function($content) use($contact_html) {
+    Filter::add('page:content', function($content) use($contact_html) {
         if( ! Text::check($content)->has('{{contact_form}}')) {
             return $content . $contact_html;
         }
         return str_replace('{{contact_form}}', $contact_html, $content);
-    });
+    }, 9);
 
 }

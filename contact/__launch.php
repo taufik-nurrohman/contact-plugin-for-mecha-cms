@@ -18,7 +18,7 @@ Route::accept($config->manager->slug . '/plugin/' . File::B(__DIR__) . '/update'
         unset($request['token']); // Remove token from request array
         if( ! Notify::errors()) {
             File::serialize($request)->saveTo(PLUGIN . DS . File::B(__DIR__) . DS . 'states' . DS . 'config.txt');
-            Notify::success(Config::speak('notify_success_updated', $speak->plugin));
+            Notify::success(Config::speak('notify_success_updated', $speak->plugin) . ' <a class="pull-right" href="' . $config->url . '/' . $request['slug'] . '" target="_blank">' . Jot::icon('eye') . ' ' . $speak->view . '</a>');
             Session::kill('error_input');
         } else {
             // `Notify::errors()` cannot be used after redirection, so I use
