@@ -1,11 +1,11 @@
-Title: Contact Form
+Title: Contact
 Author: Taufik Nurrohman
 URL: http://latitudu.com
-Version: 1.2.0
+Version: 1.3.0
 
 ====
 
-> Contact form plugin for Mecha.
+> Contact page.
 
 After you specify the page you want to set as the contact page, edit the page, then insert this _shortcode_:
 

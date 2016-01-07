@@ -1,3 +1,12 @@
-plugin_contact_title_select_page: Select the page you want to set as the contact page:
+plugin_contact_title_select_page: Contact Page
 plugin_contact_title_subject: Email Subject
 plugin_contact_title_recipient: Email Recipient
+plugin_contact_title_css: <abbr title="Cascading Style Sheet">CSS</abbr>
+
+plugin_contact_description_select_page: Select the page you want to set as the contact page.
+
+plugin_contact:
+  subject: Subject
+  name: Name
+  email: Email
+  message: Message

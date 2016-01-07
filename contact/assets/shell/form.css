@@ -1,0 +1,20 @@
+.contact-form input[name="math"] {width:4em}
+@media (max-width:36.25em) {
+  .grid {
+    float:none;
+    display:block;
+    width:auto;
+    margin:0;
+    padding:0;
+    text-align:left;
+  }
+  .contact-form input[name="math"] {
+    display:block;
+    width:100%;
+  }
+  .contact-corm .grid.form-label {
+    text-align:left;
+    line-height:inherit;
+    margin:0 0 1.3846153846153846em;
+  }
+}

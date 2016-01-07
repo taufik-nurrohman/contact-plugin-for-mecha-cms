@@ -1,1 +1,1 @@
-a:4:{s:4:"slug";s:0:"";s:15:"email_recipient";s:0:"";s:13:"email_subject";s:11:"New Message";s:11:"html_parser";b:1;}
+a:3:{s:4:"slug";s:0:"";s:15:"email_recipient";s:0:"";s:13:"email_subject";s:11:"New Message";}

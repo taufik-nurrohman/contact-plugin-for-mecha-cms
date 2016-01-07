@@ -1,11 +1,11 @@
-Title: Formulir Kontak
+Title: Kontak
 Author: Taufik Nurrohman
 URL: http://latitudu.com
-Version: 1.2.0
+Version: 1.3.0
 
 ====
 
-> Formulir kontak untuk Mecha.
+> Halaman kontak.
 
 Setelah Anda menentukan halaman yang ingin Anda jadikan sebagai halaman kontak, edit halaman tersebut, lalu sisipkan _kode pintasan_ ini:
 

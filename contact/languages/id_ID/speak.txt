@@ -1,3 +1,12 @@
-plugin_contact_title_select_page: Pilih halaman yang ingin Anda jadikan sebagai halaman kontak:
+plugin_contact_title_select_page: Halaman Kontak
 plugin_contact_title_subject: Subjek Email
 plugin_contact_title_recipient: Alamat Email Penerima
+plugin_contact_title_css: <abbr title="Cascading Style Sheet">CSS</abbr>
+
+plugin_contact_description_select_page: Pilih halaman yang ingin Anda jadikan sebagai halaman kontak.
+
+plugin_contact:
+  subject: Subjek
+  name: Nama
+  email: Email
+  message: Pesan
